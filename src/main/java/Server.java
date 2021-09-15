@@ -1,16 +1,28 @@
+import java.io.OutputStreamWriter;
 import java.net.*;
 import java.io.IOException;
-//import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
+
 
 public class Server {
     public static void main(String[] args) throws IOException {
-
+        //проверяем что он работает в браузере http://127.0.0.1:8000/ или telnet 127.0.0.1 8000
         //создаем простейший сервер
         ServerSocket serverSocket = new ServerSocket(8000);  //этот сокет используется, чтобы серверное подключение и на сервере создать ожидание клиентов
 
-        //System.out.println("start");  //проверяем что он работает в браузере http://127.0.0.1:8000/
-        serverSocket.accept(); //accept - чтобы начать слушать порт 8000, получаем подключение клиента. После создается сокет клиента
-        //System.out.println("end");
-        serverSocket.close();
+        int clientCount = 1;
+
+        while (true){
+            //accept - чтобы начать слушать порт 8000, получаем подключение клиента. После создается сокет клиента
+            Socket clientSocket = serverSocket.accept();        //Клиент подключился
+            System.out.println("Client accepted " + clientCount++);
+            OutputStreamWriter writer = new OutputStreamWriter(clientSocket.getOutputStream()); //труба для связи. Клиент получает ответ
+            writer.write("<h1>Hello<h1>");  //получаем поток
+            writer.flush();
+            writer.close();
+
+            clientSocket.close();
+        }
+        //serverSocket.close();
     }
 }
