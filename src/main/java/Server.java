@@ -1,8 +1,5 @@
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.*;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 
 public class Server {
     public static void main(String[] args) throws IOException {
@@ -16,15 +13,22 @@ public class Server {
             //accept - чтобы начать слушать порт 8000, получаем подключение клиента. После создается сокет клиента
             Socket clientSocket = serverSocket.accept();        //Клиент подключился
             System.out.println("Client accepted " + ++clientCount);
-            OutputStreamWriter writer = new OutputStreamWriter(clientSocket.getOutputStream()); //труба для связи. Клиент получает ответ
-//            writer.write("HTTP/1.0 200 OK\r\n" +                //получаем поток
-//                             "Content-type: text/html\r\n" +
-//                             "\r\n" +
-//                             "<h1>Hello <h1>" + clientCount + "\r\n");
-            writer.write("You are client #" + clientCount + "\r\n");
-            writer.flush();
-            writer.close();
 
+            //создаем поток записи, чтобы сервер отправлял ответ
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+
+            //создаем поток чтения, чтобы сервер читал запрос клиента
+            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            String request = reader.readLine();
+            String response = "#" + clientCount + ", your message length is " + request.length();
+
+            writer.write(response);
+            writer.newLine();
+            writer.flush();
+
+            reader.close();
+            writer.close();
             clientSocket.close();
         }
         //serverSocket.close();
