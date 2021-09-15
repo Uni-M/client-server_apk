@@ -10,14 +10,18 @@ public class Server {
         //создаем простейший сервер
         ServerSocket serverSocket = new ServerSocket(8000);  //этот сокет используется, чтобы серверное подключение и на сервере создать ожидание клиентов
 
-        int clientCount = 1;
+        int clientCount = 0;
 
         while (true){
             //accept - чтобы начать слушать порт 8000, получаем подключение клиента. После создается сокет клиента
             Socket clientSocket = serverSocket.accept();        //Клиент подключился
-            System.out.println("Client accepted " + clientCount++);
+            System.out.println("Client accepted " + ++clientCount);
             OutputStreamWriter writer = new OutputStreamWriter(clientSocket.getOutputStream()); //труба для связи. Клиент получает ответ
-            writer.write("<h1>Hello<h1>");  //получаем поток
+//            writer.write("HTTP/1.0 200 OK\r\n" +                //получаем поток
+//                             "Content-type: text/html\r\n" +
+//                             "\r\n" +
+//                             "<h1>Hello <h1>" + clientCount + "\r\n");
+            writer.write("You are client #" + clientCount + "\r\n");
             writer.flush();
             writer.close();
 
